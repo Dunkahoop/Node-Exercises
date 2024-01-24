@@ -37,7 +37,7 @@ residentNamePromise(argv.firstname, argv.lastname, argv.province.toUpperCase())
   });
 transferPaymentsPromise()
 .then((result) => {
-  provinceTransferPayment(result, argv.province);
+  provinceTransferPayment(result, argv.province.toUpperCase());
 })
 .catch((err) => {
   console.log(`Error ==> ${err}`);
