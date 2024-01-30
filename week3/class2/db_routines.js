@@ -7,10 +7,7 @@ const getDBInstance = async () => {
     return db;
   }
   try {
-    const client = new MongoClient(cfg.atlas, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    const client = new MongoClient(cfg.atlas);
     console.log("establishing new connection to Atlas");
     const conn = await client.connect();
     db = conn.db(cfg.appdb);
@@ -19,4 +16,6 @@ const getDBInstance = async () => {
   }
   return db;
 };
-export { getDBInstance };
+const addOne = (db, coll, doc) => db.collection(coll).insertOne(doc);
+const count = (db, coll) => db.collection(coll).countDocuments();
+export { getDBInstance, addOne, count };
