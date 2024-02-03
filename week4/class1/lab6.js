@@ -31,7 +31,7 @@ const main = async () => {
   try {
     //get collection from database instance
     const db = await dbRtns.getDBInstance();
-
+ 
     //clean out collection
     await dbRtns.deleteAll(db, cfg.countryCollection);
 
