@@ -3,4 +3,5 @@ config();
 export const countries = process.env.ISOCOUNTRIES;
 export const gocalerts = process.env.GOCALERTS;
 export const alertcollection = process.env.ALERTCOLLECTION;
-//need expansion?
+export const atlas = process.env.DBURL;
+export const appdb = process.env.DB;

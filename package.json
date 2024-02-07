@@ -15,5 +15,8 @@
     "got": "^14.0.0",
     "mongodb": "^6.3.0",
     "yargs": "^17.7.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.16"
   }
 }

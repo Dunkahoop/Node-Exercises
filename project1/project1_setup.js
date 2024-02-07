@@ -1,33 +1,53 @@
 import * as util from "./utilities.js";
 import * as cfg from "./config.js";
 import * as dbUtils from "./db_routines.js";
+import { count } from "console";
 
 const loadCountries = async () => {
+  try {
+    const db = await dbUtils.getDBInstance();
 
     let countries = await util.getJSONFromWWWPromise(cfg.countries);
-    if(countries) console.log(`Retrieved ${countries.length} countries`);
-    
+    if (countries) console.log(`Retrieved ${countries.length} countries`);
+
     let alertJson = await util.getJSONFromWWWPromise(cfg.gocalerts);
-    if(alertJson) console.log(`Retrieved ${Object.keys(alertJson.data).length} alerts`);
-    
-    //let alerts = [];
+    if (alertJson)
+      console.log(`Retrieved ${Object.keys(alertJson.data).length} alerts`);
 
-    // const db = await dbUtils.getDBInstance();
-    // await dbUtils.deleteAll(db, cfg.alertcollection);
+    let alerts = [];
+    let count = 0;
 
-    
+    countries.forEach((element) => {
+      if (alertJson.data.hasOwnProperty(element["alpha-2"]))
+        alerts[count] = {
+          country: element["alpha-2"],
+          name: element["name"],
+          text: alertJson.data[element["alpha-2"]].eng["advisory-text"],
+          date: alertJson.data[element["alpha-2"]]["date-published"].date,
+          region: element.region,
+          subregion: element["sub-region"],
+        };
+      else
+        alerts[count] = {
+          country: element["alpha-2"],
+          name: element["name"],
+          text: "No travel alerts",
+          date: "",
+          region: element.region,
+          subregion: element["sub-region"],
+        };
 
-    // countries.forEach(element => {
-    //     if(dbUtils.findAll(alertJson, element, {}, {}))
-    //     console.log(element);
-    // });
+      count++;
+    });
 
-    //for (let i = 0; i < countries.length; i++) {
-        //if(countries.data[i] == alertJson.data[i])
-            //console.log(countries.data[i]);
-            //alerts[i] = {country: countries.data[i].alpha-2, name: countries.data[i].name, text: countries.data[i].advisory-text, };
-    //}
-    //console.log(`There are ${Object.keys(alertJson.data).length} alerts and ${Object.keys(countries).length} countries`);
-}
+    let result = await dbUtils.addMany(db, cfg.alertcollection, alerts);
+    console.log(`Added ${result.insertedCount} documents`);
+
+    process.exit(0);
+  } catch (err) {
+    console.log(err);
+    process.exit(1);
+  }
+};
 
 loadCountries();
