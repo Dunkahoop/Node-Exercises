@@ -6,13 +6,14 @@ import { count } from "console";
 const loadCountries = async () => {
   try {
     const db = await dbUtils.getDBInstance();
+    var results = "";
 
     let countries = await util.getJSONFromWWWPromise(cfg.countries);
-    if (countries) console.log(`Retrieved ${countries.length} countries`);
+    if (countries) results += `Retrieved ${countries.length} countries. `;
 
     let alertJson = await util.getJSONFromWWWPromise(cfg.gocalerts);
     if (alertJson)
-      console.log(`Retrieved ${Object.keys(alertJson.data).length} alerts`);
+    results += `Retrieved ${Object.keys(alertJson.data).length} alerts. `;
 
     let alerts = [];
     let count = 0;
@@ -41,13 +42,15 @@ const loadCountries = async () => {
     });
 
     let result = await dbUtils.addMany(db, cfg.alertcollection, alerts);
-    console.log(`Added ${result.insertedCount} documents`);
+    results += `Added ${result.insertedCount} documents.`;
 
-    process.exit(0);
+    //process.exit(0);
   } catch (err) {
     console.log(err);
     process.exit(1);
+  } finally {
+    return { results: results };
   }
 };
 
-loadCountries();
+export {loadCountries}
