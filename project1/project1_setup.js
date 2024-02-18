@@ -8,6 +8,8 @@ const loadCountries = async () => {
     const db = await dbUtils.getDBInstance();
     var results = "";
 
+    //TODO: add delete code if alerts is already populated
+
     let countries = await util.getJSONFromWWWPromise(cfg.countries);
     if (countries) results += `Retrieved ${countries.length} countries. `;
 
