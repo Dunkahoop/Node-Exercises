@@ -1,35 +1,32 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+// import "./App.css";
+// import React from "react";
+// class App extends React.Component {
+//   render() {
+//     return React.createElement("h1", { className: "bigred" }, "Hello World!");
+//   }
+// }
+// export default App;
 
-function App() {
-  const [count, setCount] = useState(0)
-
+import React from "react";
+import FunctionalJSX from "./week6/functional_component.jsx";
+const App = () => {
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Duncan Wade's React Exercises</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <FunctionalJSX somedata="stuff for functional component in JSX syntax" />
+  );
+};
+export default App;
 
-export default App
+// import React from "react";
+// import ClassyComponent from "./week6/classy_component.jsx";
+// const App = () => <ClassyComponent />
+// export default App;
+
+// import React from "react";
+// import FunctionalStateHookComponent from "./week6/functional_statehook";
+// const App = () => <FunctionalStateHookComponent />
+// export default App;
+
+// import React from "react";
+// import MaterialUIEx1Component from "./week6/lab11";
+// const App = () => <MaterialUIEx1Component />
+// export default App;
