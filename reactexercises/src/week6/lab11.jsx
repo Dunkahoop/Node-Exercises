@@ -42,9 +42,9 @@ const FunctionalStateHookComponent = () => {
         <CardContent>
           <div>
             <p>{sentence}</p>
-            <input type="text" value={word} onChange={handleChange} />
+            <input type="text" placeholder="Add Word" value={word} onChange={handleChange} />
             <p></p>
-            <button onClick={handleClick}>Add word</button>
+            <button data-testid="addbutton" onClick={handleClick}>Add Word</button>
             <button onClick={handleClear}>Clear sentence</button>
           </div>
         </CardContent>
