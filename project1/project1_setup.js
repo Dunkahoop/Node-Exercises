@@ -1,21 +1,24 @@
 import * as util from "./utilities.js";
 import * as cfg from "./config.js";
 import * as dbUtils from "./db_routines.js";
-import { count } from "console";
 
 const loadCountries = async () => {
   try {
     const db = await dbUtils.getDBInstance();
     var results = "";
 
-    //TODO: add delete code if alerts is already populated
+    let deletedAlerts = await dbUtils.deleteAll(db, "alerts");
+    results += `Deleted ${deletedAlerts.deletedCount} alerts|`;
+
+    let deletedTravellers = await dbUtils.deleteAll(db, "travellers");
+    results += `Deleted ${deletedTravellers.deletedCount} travellers|`;
 
     let countries = await util.getJSONFromWWWPromise(cfg.countries);
-    if (countries) results += `Retrieved ${countries.length} countries. `;
+    if (countries) results += `Retrieved ${countries.length} countries|`;
 
     let alertJson = await util.getJSONFromWWWPromise(cfg.gocalerts);
     if (alertJson)
-    results += `Retrieved ${Object.keys(alertJson.data).length} alerts. `;
+    results += `Retrieved ${Object.keys(alertJson.data).length} alerts|`;
 
     let alerts = [];
     let count = 0;
@@ -44,7 +47,7 @@ const loadCountries = async () => {
     });
 
     let result = await dbUtils.addMany(db, cfg.alertcollection, alerts);
-    results += `Added ${result.insertedCount} documents.`;
+    results += `Added ${result.insertedCount} documents|`;
 
     //process.exit(0);
   } catch (err) {

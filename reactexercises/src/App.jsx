@@ -75,3 +75,15 @@ const App = () => {
   );
 };
 export default App;
+
+// import { QueryClient, QueryClientProvider } from "react-query";
+// import ReactQueryExample from "./week8/reactqueryexample";
+// const queryClient = new QueryClient();
+// const App = () => {
+//   return (
+//     <QueryClientProvider client={queryClient}>
+//       <ReactQueryExample />
+//     </QueryClientProvider>
+//   );
+// };
+// export default App;
