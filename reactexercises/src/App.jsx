@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Routes, Route, NavLink } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
 import { ThemeProvider } from "@mui/material/styles";
+import SocketClient from "./week10/socketclient";
 import theme from "./week7/class1/theme";
 import {
   Toolbar,
@@ -16,6 +17,7 @@ import MaterialUIEx5Component from "./week7/class2/materialuiexample5";
 import MaterialUIEx6Component from "./week7/class2/materialuiexample6";
 import MaterialUIEx7AComponent from "./week7/class2/materialuiexample7a";
 import Lab13 from "./week7/class2/lab13";
+import Lab15 from "./week10/Lab15Client";
 const App = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const handleClose = () => {
@@ -60,6 +62,9 @@ const App = () => {
             <MenuItem component={NavLink} to="/lab13" onClick={handleClose}>
               Lab 13
             </MenuItem>
+            <MenuItem component={NavLink} to="/lab15" onClick={handleClose}>
+              Lab 15
+            </MenuItem>
           </Menu>
         </Toolbar>
       </AppBar>
@@ -70,11 +75,23 @@ const App = () => {
         <Route path="/ex6" element={<MaterialUIEx6Component />} />
         <Route path="/ex7a" element={<MaterialUIEx7AComponent />} />
         <Route path="/lab13" element={<Lab13 />} />
+        <Route path="/lab15" element={<Lab15 />} />
       </Routes>
     </ThemeProvider>
   );
 };
 export default App;
+
+//import SocketClient from "./week10/socketclient";
+// import AllRooms from "./week10/allrooms";
+// function App() {
+//  return (
+//  <div>
+//  <AllRooms />
+//  </div>
+//  );
+// }
+// export default App;
 
 // import { QueryClient, QueryClientProvider } from "react-query";
 // import ReactQueryExample from "./week8/reactqueryexample";
