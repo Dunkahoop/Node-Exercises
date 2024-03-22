@@ -8,7 +8,7 @@ export default function App(props) {
     <ThemeProvider theme={theme}>
       <Card>
         <CardHeader
-          title="Lab 16"
+          title="Lab 17"
           color="inherit"
           style={{ textAlign: "center" }}
         />

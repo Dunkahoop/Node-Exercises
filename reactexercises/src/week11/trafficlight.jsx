@@ -12,24 +12,29 @@ const TrafficLight = (props) => {
     serverConnect();
     effectRan.current = true;
 
-    setColor("red");//sets all lights to red
+    setColor("red"); //sets all lights to red
   }, []);
 
   const serverConnect = () => {
     try {
-      const socket = io.connect("localhost:5000", {
-        forceNew: true,
-        transports: ["websocket"],
-        autoConnect: true,
-        reconnection: false,
-        timeout: 5000,
-      });
+      //connect to server locally - need to uncomment to run locally (duh)
+      // const socket = io.connect("localhost:5000", {
+      //   forceNew: true,
+      //   transports: ["websocket"],
+      //   autoConnect: true,
+      //   reconnection: false,
+      //   timeout: 5000,
+      // });
+
+      // connect to server on Elastic Beanstalk
+      const socket = io.connect();
+
       socket.on("connect_error", () => {
         setState({ msg: "failed" });
       });
-      socket.emit("join", { street: props.street }, (err) => {});//join back-end
+      socket.emit("join", { street: props.street }, (err) => {}); //join back-end
       console.log("joined");
-      socket.on("turnLampOn", handleTurnLampOn);//turn on lamp with method
+      socket.on("turnLampOn", handleTurnLampOn); //turn on lamp with method
       if (socket.io._readyState === "opening")
         setState({ msg: "connecting...", showMsg: true });
     } catch (err) {
@@ -40,7 +45,7 @@ const TrafficLight = (props) => {
 
   // lamp handler code, lamp data from server
   const handleTurnLampOn = async (lampData) => {
-    setState({msg: "", showMsg: false});
+    setState({ msg: "", showMsg: false });
     console.log("turning lamp on...");
     while (true) {
       // loop until browser closes
@@ -63,26 +68,32 @@ const TrafficLight = (props) => {
 
   return (
     <div>
-      <div style={{ textAlign: "center", fontName: "Helvetica", paddingBottom: 10 }}>
+      <div
+        style={{
+          textAlign: "center",
+          fontName: "Helvetica",
+          paddingBottom: 10,
+        }}
+      >
         {state.msg}
       </div>
-    <div className="light">
-      <div
-        className="lamp"
-        style={{ backgroundColor: getStateColor("red"), margin: ".5rem" }}
-      />
-      <div
-        className="lamp"
-        style={{ backgroundColor: getStateColor("yellow"), margin: ".5rem" }}
-      />
-      <div
-        className="lamp"
-        style={{ backgroundColor: getStateColor("green"), margin: ".5rem" }}
-      />
-      <div style={{ textAlign: "center", fontName: "Helvetica" }}>
-        {props.street}
+      <div className="light">
+        <div
+          className="lamp"
+          style={{ backgroundColor: getStateColor("red"), margin: ".5rem" }}
+        />
+        <div
+          className="lamp"
+          style={{ backgroundColor: getStateColor("yellow"), margin: ".5rem" }}
+        />
+        <div
+          className="lamp"
+          style={{ backgroundColor: getStateColor("green"), margin: ".5rem" }}
+        />
+        <div style={{ textAlign: "center", fontName: "Helvetica" }}>
+          {props.street}
+        </div>
       </div>
-    </div>
     </div>
   );
 };

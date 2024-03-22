@@ -1,0 +1,21 @@
+{
+    "name": "traffic",
+    "type": "module",
+    "version": "1.0.0",
+    "description": "Lab 17",
+    "main": "app.js",
+    "author": "Duncan Wade",
+    "license": "ISC",
+    "engines": {
+    "node": "20.11.1"
+    },
+    "dependencies": {
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "socket.io": "^4.5.4"
+    },
+    "scripts": {
+    "start": "node app.js"
+    },
+    "devDependencies": {}
+    }
