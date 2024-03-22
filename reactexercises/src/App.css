@@ -7,6 +7,26 @@
 body {
   place-items: unset !important;
 }
+.light {
+  border: solid;
+  width: 4.25rem;
+ }
+ .lamp {
+  height: 3rem;
+  width: 3rem;
+  border-style: solid;
+  border-width: 2px;
+  border-radius: 50%;
+ }
+ .flex-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 10vh;
+ }
+ 
 @media only screen and (max-width: 600px) {
   .card {
   margin-left: 2vw;

@@ -3,9 +3,9 @@ import { Server } from "socket.io";
 import express from "express";
 import http from "http";
 const streetLights = [
-    {streetName: 'Sesame St.', green: 12000, red: 7500, yellow: 3000},
-    {streetName: 'Loving Blvd.', green: 22000, red: 5000, yellow: 2000},
-    {streetName: 'Fleet St.', green: 9000, red: 10000, yellow: 1000}
+    {streetName: 'Duncan', green: 12000, red: 7500, yellow: 3000},
+    {streetName: 'Wade', green: 22000, red: 5000, yellow: 2000},
+    {streetName: 'Info3139', green: 18000, red: 7000, yellow: 2500}
 ]
    
 const app = express();
@@ -20,43 +20,16 @@ const io = new Server(httpServer, {});
 io.on("connection", (socket) => {
   console.log("new connection established");
   // client has joined
-  socket.on("join", (client) => {
-    socket.name = client.name;
-    // use the room property to create a room
-    socket.join(client.room);
-    console.log(`${socket.name} has joined ${client.room}`);
+  socket.on("join", (client) => {//join front-end
+    socket.join(client.street);//join room using street name
+    console.log(client.street);
     
-    // Find the streetLight object that matches the streetName
-    const streetLight = streetLights.find(light => light.streetName === client.streetName);
+    const streetLight = streetLights.find((light) => light.streetName === client.street);//find corresponding street name in streetlight array
+    console.log(streetLight);
     
-    if (streetLight) {
-      // Include the streetName in the join message
-      socket.emit(
-        "welcome",
-        `Welcome ${socket.name} to ${streetLight.streetName}, currently there are ${getNumberOfUsersInRoom(
-          client.room
-        )} client(s) in the ${client.room} room`
-      );
-      
-      // Emit a turnLampOn message with the streetLight object
-      io.to(client.room).emit('turnLampOn', streetLight);
-    } else {
-      socket.emit(
-        "welcome",
-        `Welcome ${socket.name}, currently there are ${getNumberOfUsersInRoom(
-          client.room
-        )} client(s) in the ${client.room} room`
-      );
-    }
-    
-    // send message to rest of the room the client just joined
-    socket
-      .to(client.room)
-      .emit("newclient", `${socket.name} has joined this room`);
+    if (streetLight) socket.emit('turnLampOn', streetLight);//emit turnLampOn method, send streetlight to be turned on
   });
 });
-const getNumberOfUsersInRoom = (roomName) =>
-  io.sockets.adapter.rooms.get(roomName).size;
 
 // will pass 404 to error handler
 app.use((req, res, next) => {

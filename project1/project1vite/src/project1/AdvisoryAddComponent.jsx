@@ -12,6 +12,7 @@ import {
 import theme from "./theme";
 import "../App.css";
 import globe from "./globe.png";
+//add localhost:5000/ to fetch to get working
 export default function AdvisoryAddComponent(props) {
   const [travelerName, setTravelerName] = useState("");
   const [selectedCountry, setSelectedCountry] = useState("");

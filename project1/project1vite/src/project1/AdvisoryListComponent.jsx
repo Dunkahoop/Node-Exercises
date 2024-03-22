@@ -31,6 +31,8 @@ export default function AdvisoryListComponent(props) {
   const [regions, setRegions] = useState([]);
   const [subregions, setSubRegions] = useState([]);
   const [travellers, setTravellers] = useState([]);
+//add localhost:5000/ to fetch to get working
+
   //may need to remove
   // useEffect(() => {
   //   fetchCountriesByRegion("Europe");

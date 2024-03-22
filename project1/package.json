@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
-  "author": "Yournamegoeshere",
+  "author": "Duncan Wade",
   "license": "ISC",
   "engines": {
     "node": "20.11.1"
