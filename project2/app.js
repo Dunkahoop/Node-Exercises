@@ -16,10 +16,12 @@ io.on("connection", (socket) => {
   console.log("new connection established");
   // scenario 1 - client has joined
   socket.on("join", (client) => {
+    console.log(`${socket.name} joining ${client.room}`);
     socketHandlers.handleJoin(socket, client, io);
   });
   // scenario 2 - client disconnects from server
   socket.on("disconnect", () => {
+    console.log(`${socket.name} disconnecting`);
     socketHandlers.handleDisconnect(socket);
   });
 });

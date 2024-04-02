@@ -1,4 +1,4 @@
-import React, { useReducer, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import theme from "./theme";
 import io from "socket.io-client";
 import "./client.css";
@@ -17,14 +17,12 @@ export default function App() {
     msg: "",
     status: "",
     messages: [],
+    socket: "",
   };
   const reducer = (state, newState) => ({ ...state, ...newState });
   const [state, setState] = useReducer(reducer, initialState);
   const [showJoin, setShowJoin] = useState(true);
-  const onButtonClick = () => {
-    serverConnect();
-  };
-  const serverConnect = () => {
+  useEffect(() => {
     try {
       const socket = io.connect("localhost:5000", {
         forceNew: true,
@@ -33,18 +31,26 @@ export default function App() {
         reconnection: false,
         timeout: 5000,
       });
+      setState({
+        socket: socket
+      });
       socket.on("connect_error", () => {
         setState({ status: "cannot connect - try again later" });
       });
-      socket.emit("join", { name: state.name, room: state.room }, (err) => {});
       socket.on("welcome", addMessageToList);
       socket.on("nameTaken", onNameTaken);
       socket.on("newclient", addMessageToList);
       socket.on("someoneLeft", addMessageToList);
+
+      if (!socket || socket.io._readyState === "closed")
+      socket.emit("disconnect", socket.room);
     } catch (err) {
       console.log(err);
       setState({ status: "some other problem occurred" });
     }
+  }, []);
+  const onButtonClick = () => {
+    state.socket.emit("join", { name: state.name, room: state.room }, (err) => {});
   };
   const onNameTaken = (nameTakenMsgFromServer) => {
     setState({ status: nameTakenMsgFromServer });
@@ -63,7 +69,7 @@ export default function App() {
   return (
     <ThemeProvider theme={theme}>
       <Typography variant="h6" color="inherit" textAlign={"center"}>
-          INFO3139 Lab 18
+        INFO3139 Lab 18
       </Typography>
       {showJoin ? (
         <Card className="card">
@@ -104,7 +110,9 @@ export default function App() {
           <div style={{ paddingTop: "2vh" }}>
             <ul>
               {state.messages.map((message, index) => (
-                <Typography style={{ marginLeft: "5vw" }} key={index}>{message}</Typography>
+                <Typography style={{ marginLeft: "5vw" }} key={index}>
+                  {message}
+                </Typography>
               ))}
             </ul>
           </div>
