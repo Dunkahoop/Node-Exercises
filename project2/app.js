@@ -24,6 +24,15 @@ io.on("connection", (socket) => {
     console.log(`${socket.name} disconnecting`);
     socketHandlers.handleDisconnect(socket);
   });
+  // scenario 3 - client sends notification that user started typing
+  socket.on("typing", (client) => {
+    console.log(`${client.name} is typing`);
+    socketHandlers.handleTyping(socket, client);
+  });
+  // scenario 4 - client sends message to room including self
+  socket.on("message", (client) => {
+    socketHandlers.handleMessage(io, socket, client);
+  });
 });
 
 // will pass 404 to error handler

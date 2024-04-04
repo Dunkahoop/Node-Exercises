@@ -1,6 +1,7 @@
 import React, { useEffect, useReducer, useState } from "react";
 import theme from "./theme";
 import io from "socket.io-client";
+import ChatMsg from "./chatMsg";
 import "./client.css";
 import {
   Button,
@@ -18,6 +19,9 @@ export default function App() {
     status: "",
     messages: [],
     socket: "",
+    isTyping: false,
+    typingMsg: "",
+    message: "",
   };
   const reducer = (state, newState) => ({ ...state, ...newState });
   const [state, setState] = useReducer(reducer, initialState);
@@ -32,7 +36,7 @@ export default function App() {
         timeout: 5000,
       });
       setState({
-        socket: socket
+        socket: socket,
       });
       socket.on("connect_error", () => {
         setState({ status: "cannot connect - try again later" });
@@ -41,16 +45,22 @@ export default function App() {
       socket.on("nameTaken", onNameTaken);
       socket.on("newclient", addMessageToList);
       socket.on("someoneLeft", addMessageToList);
+      socket.on("someoneistyping", onTyping);
+      socket.on("newmessage", onNewMessage);
 
       if (!socket || socket.io._readyState === "closed")
-      socket.emit("disconnect", socket.room);
+        socket.emit("disconnect", socket.room);
     } catch (err) {
       console.log(err);
       setState({ status: "some other problem occurred" });
     }
   }, []);
   const onButtonClick = () => {
-    state.socket.emit("join", { name: state.name, room: state.room }, (err) => {});
+    state.socket.emit(
+      "join",
+      { name: state.name, room: state.room },
+      (err) => {}
+    );
   };
   const onNameTaken = (nameTakenMsgFromServer) => {
     setState({ status: nameTakenMsgFromServer });
@@ -62,6 +72,40 @@ export default function App() {
       messages: messages,
     });
     setShowJoin(false);
+  };
+  const onTyping = (msg) => {
+    if (msg.from !== state.name) {
+      setState({
+        typingMsg: msg,
+      });
+    }
+  };
+  // keypress handler for message TextField
+  const onMessageChange = (e) => {
+    setState({message: e.target.value})
+    if (state.isTyping === false) {
+      state.socket.emit(
+        "typing",
+        { name: state.name, room: state.room, message: state.message },
+        (err) => {}
+      );
+      setState({ isTyping: true }); // flag first byte only
+    }
+  };
+  const onNewMessage = (msg) => {
+    addMessageToList(msg);
+    setState({ typingMsg: "" });
+  };
+  // enter key handler to send message
+  const handleSendMessage = (e) => {
+    if (state.message !== "") {
+      state.socket.emit(
+        "message",
+        {name: state.name, room: state.room, message: state.message},
+        (err) => {}
+      );
+      setState({ isTyping: false, message: "" });
+    }
   };
   const handleChange = (name) => (event) => {
     setState({ ...state, [name]: event.target.value });
@@ -108,13 +152,26 @@ export default function App() {
       <div>
         {!showJoin ? (
           <div style={{ paddingTop: "2vh" }}>
+            <TextField
+              onChange={onMessageChange}
+              placeholder="type something here"
+              autoFocus={true}
+              value={state.message}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleSendMessage();
+                  e.target.blur();
+                }
+              }}
+            />
             <ul>
               {state.messages.map((message, index) => (
-                <Typography style={{ marginLeft: "5vw" }} key={index}>
-                  {message}
-                </Typography>
+                <ChatMsg msg={message} key={index} />
               ))}
             </ul>
+            <div>
+              <Typography color="primary">{state.typingMsg}</Typography>
+            </div>
           </div>
         ) : null}
       </div>

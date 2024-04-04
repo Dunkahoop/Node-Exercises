@@ -1,0 +1,14 @@
+.scenario-container {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 2em;
+}
+.scenario-message {
+  color: white;
+  width: 80%;
+  margin: 2px;
+  padding: 1em;
+  font-size: smaller;
+  font-weight: bold;
+}
