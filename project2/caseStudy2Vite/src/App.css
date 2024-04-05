@@ -12,3 +12,16 @@
   font-size: smaller;
   font-weight: bold;
 }
+ 
+ .userBubble {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: smaller;
+  position: relative;
+  padding: 2vw;
+  width: 50vw;
+  margin-bottom: -1em;
+  border-radius: 10px;
+  left: -3vw;
+  color: white;
+ }
+ 

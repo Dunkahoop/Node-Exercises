@@ -19,6 +19,8 @@ import MaterialUIEx7AComponent from "./week7/class2/materialuiexample7a";
 import Lab13 from "./week7/class2/lab13";
 import Lab15 from "./week10/Lab15Client";
 import Lab16 from "./week11/street";
+import Week13Exercise1 from "./week13/week13exercise1";
+import Week13Exercise2 from "./week13/week13exercise2";
 const App = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const handleClose = () => {
@@ -69,6 +71,12 @@ const App = () => {
             <MenuItem component={NavLink} to="/lab16" onClick={handleClose}>
               Lab 16
             </MenuItem>
+            <MenuItem component={NavLink} to="/lab20" onClick={handleClose}>
+              Lab 20 #1
+            </MenuItem>
+            <MenuItem component={NavLink} to="/lab20part2" onClick={handleClose}>
+              Lab 20 #2
+            </MenuItem>
           </Menu>
         </Toolbar>
       </AppBar>
@@ -81,6 +89,8 @@ const App = () => {
         <Route path="/lab13" element={<Lab13 />} />
         <Route path="/lab15" element={<Lab15 />} />
         <Route path="/lab16" element={<Lab16 />} />
+        <Route path="/lab20" element={<Week13Exercise1/>} />
+        <Route path="/lab20part2" element={<Week13Exercise2/>} />
       </Routes>
     </ThemeProvider>
   );

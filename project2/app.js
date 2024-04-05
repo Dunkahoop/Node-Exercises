@@ -14,6 +14,12 @@ const io = new Server(httpServer, {});
 // main socket routine
 io.on("connection", (socket) => {
   console.log("new connection established");
+  socketHandlers.handleConnection(socket);
+
+  socket.on("updateusers", () => {
+    socketHandlers.handleUpdateUsers(socket);
+  });
+
   // scenario 1 - client has joined
   socket.on("join", (client) => {
     console.log(`${socket.name} joining ${client.room}`);
@@ -33,6 +39,8 @@ io.on("connection", (socket) => {
   socket.on("message", (client) => {
     socketHandlers.handleMessage(io, socket, client);
   });
+
+  
 });
 
 // will pass 404 to error handler

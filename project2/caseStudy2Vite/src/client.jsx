@@ -1,13 +1,23 @@
 import React, { useEffect, useReducer, useState } from "react";
+import Accessibility from "@mui/icons-material/Accessibility";
 import theme from "./theme";
 import io from "socket.io-client";
 import ChatMsg from "./chatMsg";
 import "./client.css";
+import ChatBubbles from "../src/chat-bubbles.png";
 import {
+  AppBar,
+  Autocomplete,
   Button,
   Card,
   CardContent,
+  IconButton,
+  CardMedia,
+  Dialog,
+  DialogTitle,
+  DialogContent,
   TextField,
+  Toolbar,
   Typography,
 } from "@mui/material";
 import { ThemeProvider } from "@emotion/react";
@@ -22,6 +32,9 @@ export default function App() {
     isTyping: false,
     typingMsg: "",
     message: "",
+    rooms: [],
+    names: [],
+    socketConnected: false,
   };
   const reducer = (state, newState) => ({ ...state, ...newState });
   const [state, setState] = useReducer(reducer, initialState);
@@ -47,6 +60,8 @@ export default function App() {
       socket.on("someoneLeft", addMessageToList);
       socket.on("someoneistyping", onTyping);
       socket.on("newmessage", onNewMessage);
+      socket.on("usersupdated", updateUsers);
+      socket.on("connected", updateRooms);
 
       if (!socket || socket.io._readyState === "closed")
         socket.emit("disconnect", socket.room);
@@ -55,6 +70,12 @@ export default function App() {
       setState({ status: "some other problem occurred" });
     }
   }, []);
+  const updateUsers = (users) => {
+    setState({ names: users });
+  };
+  const updateRooms = (rooms) => {
+    setState({ rooms: rooms });
+  };
   const onButtonClick = () => {
     state.socket.emit(
       "join",
@@ -82,7 +103,7 @@ export default function App() {
   };
   // keypress handler for message TextField
   const onMessageChange = (e) => {
-    setState({message: e.target.value})
+    setState({ message: e.target.value });
     if (state.isTyping === false) {
       state.socket.emit(
         "typing",
@@ -101,7 +122,7 @@ export default function App() {
     if (state.message !== "") {
       state.socket.emit(
         "message",
-        {name: state.name, room: state.room, message: state.message},
+        { name: state.name, room: state.room, message: state.message },
         (err) => {}
       );
       setState({ isTyping: false, message: "" });
@@ -110,16 +131,46 @@ export default function App() {
   const handleChange = (name) => (event) => {
     setState({ ...state, [name]: event.target.value });
   };
+  const [open, setOpen] = useState(false);
+  const handleOpenDialog = () => {setOpen(true); state.socket.emit("updateusers")};
+  const handleCloseDialog = () => setOpen(false);
   return (
     <ThemeProvider theme={theme}>
-      <Typography variant="h6" color="inherit" textAlign={"center"}>
-        INFO3139 Lab 18
-      </Typography>
+      <AppBar position="sticky">
+        <Toolbar color="primary">
+          <Typography variant="h6" color="inherit" textAlign={"center"}>
+            INFO3139 Project 2
+          </Typography>
+          <section style={{ height: 90, width: 90, marginLeft: "auto" }}>
+            <IconButton
+              onClick={handleOpenDialog}
+              style={{ display: showJoin ? "none" : "block" }}
+            >
+              <Accessibility
+                style={{ color: "white", height: 70, width: 70 }}
+              />
+            </IconButton>
+          </section>
+        </Toolbar>
+      </AppBar>
       {showJoin ? (
         <Card className="card">
           <CardContent>
+            <CardMedia
+              style={{
+                padding: 20,
+                alignContent: "center",
+              }}
+              component="img"
+              image={ChatBubbles}
+              alt="Chat Bubbles"
+            />
+            <Typography color="primary" fontSize={25} textAlign={"center"}>
+              Sign In
+            </Typography>
+            <p />
             <TextField
-              placeholder="Enter unique name here"
+              placeholder="Enter unique name"
               autoFocus={true}
               required
               value={state.name}
@@ -128,8 +179,20 @@ export default function App() {
               helperText={state.status}
             />
             <p />
+            <Autocomplete
+              options={state.rooms}
+              getOptionKey={(room) => room}
+              onChange={(e, selection) => {
+                setState({ room: selection });
+              }}
+              style={{ width: 300 }}
+              renderInput={(params) => (
+                <TextField {...params} label="Room" variant="outlined" />
+              )}
+            />
+            <p />
             <TextField
-              placeholder="Enter room name here"
+              placeholder="Enter new room name"
               value={state.room}
               onChange={handleChange("room")}
             />
@@ -151,30 +214,48 @@ export default function App() {
       ) : null}
       <div>
         {!showJoin ? (
-          <div style={{ paddingTop: "2vh" }}>
-            <TextField
-              onChange={onMessageChange}
-              placeholder="type something here"
-              autoFocus={true}
-              value={state.message}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  handleSendMessage();
-                  e.target.blur();
-                }
-              }}
-            />
-            <ul>
-              {state.messages.map((message, index) => (
-                <ChatMsg msg={message} key={index} />
-              ))}
-            </ul>
-            <div>
-              <Typography color="primary">{state.typingMsg}</Typography>
+          <div style={{ paddingTop: "2vh", alignContent: "center" }}>
+            <Typography textAlign={"center"} fontSize={25}>
+              {state.room}
+            </Typography>
+            {state.messages.map((message, index) => (
+              <ChatMsg
+                msg={message}
+                key={index}
+                fromUser={message.name === state.name}
+              />
+            ))}
+            <div style={{ bottom: 25, position: "fixed" }}>
+              <TextField
+                onChange={onMessageChange}
+                placeholder="type something here"
+                autoFocus={true}
+                value={state.message}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleSendMessage();
+                    e.target.blur();
+                  }
+                }}
+              />
+              <div>
+                <Typography color="primary">{state.typingMsg}</Typography>
+              </div>
             </div>
           </div>
         ) : null}
       </div>
+      <Dialog open={open} onClose={handleCloseDialog} style={{ margin: 20 }}>
+        <DialogTitle style={{ textAlign: "center" }}>Who's On?</DialogTitle>
+        <DialogContent>
+          {state.names.map((user, index) => (
+            <div>
+              
+            <Typography key={index}><Accessibility style={{color: user.color, height: 20, width: 20, paddingRight: 5}}/>{user.name} is in {user.room}</Typography>
+            </div>
+          ))}
+        </DialogContent>
+      </Dialog>
     </ThemeProvider>
   );
 }
