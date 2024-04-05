@@ -41,7 +41,7 @@ export default function App() {
   const [showJoin, setShowJoin] = useState(true);
   useEffect(() => {
     try {
-      const socket = io.connect("localhost:5000", {
+      const socket = io.connect("/", {
         forceNew: true,
         transports: ["websocket"],
         autoConnect: true,
@@ -251,7 +251,7 @@ export default function App() {
           {state.names.map((user, index) => (
             <div>
               
-            <Typography key={index}><Accessibility style={{color: user.color, height: 20, width: 20, paddingRight: 5}}/>{user.name} is in {user.room}</Typography>
+            <Typography key={index}><Accessibility style={{color: user.color, height: 20, width: 20, paddingRight: 5}}/>{user.name} is in room {user.room}</Typography>
             </div>
           ))}
         </DialogContent>
