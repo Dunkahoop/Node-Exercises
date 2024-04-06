@@ -33,7 +33,7 @@ export default function App() {
     typingMsg: "",
     message: "",
     rooms: [],
-    names: [],
+    users: [],
     socketConnected: false,
   };
   const reducer = (state, newState) => ({ ...state, ...newState });
@@ -41,19 +41,22 @@ export default function App() {
   const [showJoin, setShowJoin] = useState(true);
   useEffect(() => {
     try {
-      const socket = io.connect("/", {
+      //connect socket to server
+      const socket = io.connect("localhost:5000", {
         forceNew: true,
         transports: ["websocket"],
         autoConnect: true,
         reconnection: false,
         timeout: 5000,
       });
+      //save socket to state for reuse
       setState({
         socket: socket,
       });
       socket.on("connect_error", () => {
         setState({ status: "cannot connect - try again later" });
       });
+      //socket emit listeners
       socket.on("welcome", addMessageToList);
       socket.on("nameTaken", onNameTaken);
       socket.on("newclient", addMessageToList);
@@ -63,6 +66,7 @@ export default function App() {
       socket.on("usersupdated", updateUsers);
       socket.on("connected", updateRooms);
 
+      //emit disconnect when user disconnects
       if (!socket || socket.io._readyState === "closed")
         socket.emit("disconnect", socket.room);
     } catch (err) {
@@ -71,12 +75,12 @@ export default function App() {
     }
   }, []);
   const updateUsers = (users) => {
-    setState({ names: users });
+    setState({ users: users });
   };
   const updateRooms = (rooms) => {
     setState({ rooms: rooms });
   };
-  const onButtonClick = () => {
+  const onButtonClick = () => {//button handler for join button
     state.socket.emit(
       "join",
       { name: state.name, room: state.room },
@@ -94,6 +98,7 @@ export default function App() {
     });
     setShowJoin(false);
   };
+  //show typing message
   const onTyping = (msg) => {
     if (msg.from !== state.name) {
       setState({
@@ -128,11 +133,16 @@ export default function App() {
       setState({ isTyping: false, message: "" });
     }
   };
+  //used to change name and room values upon input
   const handleChange = (name) => (event) => {
     setState({ ...state, [name]: event.target.value });
   };
+  //methods for opening and closing dialog box
   const [open, setOpen] = useState(false);
-  const handleOpenDialog = () => {setOpen(true); state.socket.emit("updateusers")};
+  const handleOpenDialog = () => {
+    setOpen(true);
+    state.socket.emit("updateusers");//gets set of currently online users
+  };
   const handleCloseDialog = () => setOpen(false);
   return (
     <ThemeProvider theme={theme}>
@@ -219,13 +229,22 @@ export default function App() {
               {state.room}
             </Typography>
             {state.messages.map((message, index) => (
-              <ChatMsg
+              <div style={{overflow: 'auto', paddingBottom: "50px"}}>
+                <ChatMsg
                 msg={message}
                 key={index}
                 fromUser={message.name === state.name}
               />
+              </div>
             ))}
-            <div style={{ bottom: 25, position: "fixed" }}>
+            <div
+              style={{
+                bottom: 25,
+                position: "fixed",
+                backgroundColor: "white",
+                zIndex: 1,
+              }}
+            >
               <TextField
                 onChange={onMessageChange}
                 placeholder="type something here"
@@ -248,10 +267,19 @@ export default function App() {
       <Dialog open={open} onClose={handleCloseDialog} style={{ margin: 20 }}>
         <DialogTitle style={{ textAlign: "center" }}>Who's On?</DialogTitle>
         <DialogContent>
-          {state.names.map((user, index) => (
+          {state.users.map((user, index) => (
             <div>
-              
-            <Typography key={index}><Accessibility style={{color: user.color, height: 20, width: 20, paddingRight: 5}}/>{user.name} is in room {user.room}</Typography>
+              <Typography key={index}>
+                <Accessibility
+                  style={{
+                    color: user.color,
+                    height: 20,
+                    width: 20,
+                    paddingRight: 5,
+                  }}
+                />
+                {user.name} is in room {user.room}
+              </Typography>
             </div>
           ))}
         </DialogContent>

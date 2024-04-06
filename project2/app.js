@@ -14,8 +14,9 @@ const io = new Server(httpServer, {});
 // main socket routine
 io.on("connection", (socket) => {
   console.log("new connection established");
-  socketHandlers.handleConnection(socket);
+  socketHandlers.handleConnection(socket);//get rooms when a new connection is made
 
+  //update list of users for dialog box
   socket.on("updateusers", () => {
     socketHandlers.handleUpdateUsers(socket);
   });
