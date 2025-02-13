@@ -1,6 +1,6 @@
 # Node Exercises
 
-This is an assortment of exercises and projects made for my Javascript class in the Winter 2024 semester.
+This is an assortment of exercises and projects made for my Javascript class in the Winter 2024 semester. You can run `project1`, `project2`, and `reactexercises`, as the other folders are assorted javascript files used as practice/reference
 
 ## Stack
 
@@ -10,4 +10,4 @@ This is an assortment of exercises and projects made for my Javascript class in 
 
 ## Usage
 
-To run, access the directory in a terminal and run `npm run`. Then, go to the URL `localhost:8080`
+To run an app, access the directory of the app's folder in a terminal and run `npm run`. Then, go to the URL `localhost:8080`
