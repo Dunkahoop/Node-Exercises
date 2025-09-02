@@ -11,3 +11,5 @@ This is an assortment of exercises and projects made for my Javascript class in 
 ## Usage
 
 To run an app, access the directory of the app's folder in a terminal and run `npm run`. Then, go to the URL `localhost:8080`
+
+It *may* not work because of the fact that my MongoDB cluster is locked, and it's private (I hope my key isn't on here)
